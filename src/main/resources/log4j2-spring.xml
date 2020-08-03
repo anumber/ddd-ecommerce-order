@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <properties>
+        <property name="patternLayout">%style{%d{yyyy-MM-dd HH:mm:ss}}{red} %highlight{{user:'%X{user}', requestId:'%X{requestId}'} %-5level }[%style{%t:%r}{bright,blue}] %style{%c.%M-%L{1.}}{bright,yellow}: %msg%n%throwable</property>
+        <property name="filePatternLayout">%d{yyyy-MM-dd HH:mm:ss} {user:'%X{user}', requestId:'%X{requestId}'} %-5level [ %t:%r ] %C{1.}: %msg%n%throwable</property>
+        <property name="logFileName">app.log</property>
+    </properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="${patternLayout}"/>
+        </Console>
+        <RollingFile name="AllRollingFile"
+                     fileName="./logs/${logFileName}"
+                     filePattern="./logs/$${date:yyyy-MM}/${logFileName}-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <PatternLayout pattern="${filePatternLayout}"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="200 MB"/>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+            <DefaultRolloverStrategy max="7"/>
+        </RollingFile>
+
+<!--        RollingFileAppender是Log4j2中的一种能够实现日志文件滚动更新(rollover)的Appender。-->
+        <RollingFile name="ErrorRollingFile"
+                     fileName="./logs/error_${logFileName}"
+                     filePattern="./logs/error/$${date:yyyy-MM}/${logFileName}-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <PatternLayout pattern="${filePatternLayout}"/>
+<!--            阈值过滤器，onMatch表示匹配设定的日志级别后是DENY还是ACCEPT，onMismatch表示不匹配设定的日志级别是DENY还是ACCEPT还是NEUTRAL-->
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+<!--            组合归档政策-->
+            <Policies>
+<!--                当日志文件大小大于size时，将根据filepattern对文件进行重命名，并生成新的文件用于日志写入-->
+                <SizeBasedTriggeringPolicy size="200 MB"/>
+<!--                filePattern中yyyy-MM-dd最小时间粒度为天，当经过了interval天后，将根据filePattern对文件进行重命名，并生成新的文件用于日志写入-->
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+<!--            max参数指定了计数器的最大值。一旦计数器达到了最大值，过旧的文件将被删除（max参数是与filePattern中的计数器%i配合起作用的）-->
+            <DefaultRolloverStrategy max="7"/>
+        </RollingFile>
+        <RollingFile name="warnRollingFile"
+                     fileName="./logs/warn_${logFileName}"
+                     filePattern="./logs/warn/$${date:yyyy-MM}/${logFileName}-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <PatternLayout pattern="${filePatternLayout}"/>
+            <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="200 MB"/>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+            <DefaultRolloverStrategy max="7"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- spring log -->
+        <Logger name="org.hibernate.SQL" level="DEBUG"/>
+        <Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+        <!-- LOG everything at INFO level -->
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AllRollingFile"/>
+            <AppenderRef ref="ErrorRollingFile"/>
+            <AppenderRef ref="warnRollingFile"/>
+        </Root>
+    </Loggers>
+</Configuration>

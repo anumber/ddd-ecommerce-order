@@ -1,0 +1,29 @@
+server:
+  port: 8080
+  tomcat:
+    accept-count: 200
+    max-connections: 500
+    connection-timeout: 10000
+    threads:
+      min-spare: 10
+      max: 10
+spring:
+  application:
+    name: waterdrop-service
+  jackson:
+    default-property-inclusion: non_null
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    locale: zh_CN
+  liquibase:
+    enabled: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/dev_test
+    username: root
+    password: 123456
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+      use-new-id-generator-mappings: true
+
