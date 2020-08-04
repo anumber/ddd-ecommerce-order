@@ -1,6 +1,7 @@
-package com.ecommerce.order.representation;
+package com.ecommerce.order.adapter.transport;
 
 import com.ecommerce.order.common.logging.RequestIdMdcFilter;
+import com.ecommerce.order.representation.AboutRepresentation;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.core.env.Environment;

@@ -2,11 +2,19 @@ plugins {
 	id 'org.springframework.boot' version '2.3.1.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
+	id 'application'
 }
 
-group = 'com.ecommerce'
-version = '0.0.1-SNAPSHOT'
+/*java 插件的额外属性*/
+//编译源文件的java版本
 sourceCompatibility = '1.8'
+//打包成jar文件时的文件名称
+archivesBaseName = 'ecommerce-order'
+
+/*自定义的额外属性*/
+ext {
+	property2 = "this is property2"
+}
 
 configurations {
 	compileOnly {
@@ -50,6 +58,49 @@ dependencies {
 	}
 }
 
+/*sourceSets是管理项目的目录结构*/
+sourceSets {
+
+	integrationTest {
+		compileClasspath += main.output + test.output
+		runtimeClasspath += main.output + test.output
+	}
+
+	apiTest {
+		compileClasspath += main.output + test.output
+		runtimeClasspath += main.output + test.output
+	}
+
+}
+
 test {
 	useJUnitPlatform()
 }
+
+task integrationTest(type: Test) {
+	description = 'Run integration tests.'
+	group = 'verification'
+	testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	classpath = sourceSets.integrationTest.runtimeClasspath
+	shouldRunAfter 'test'
+}
+
+
+task apiTest(type: Test) {
+	description = 'Run API tests.'
+	group = 'verification'
+	testClassesDirs = sourceSets.apiTest.output.classesDirs
+	classpath = sourceSets.apiTest.runtimeClasspath
+	shouldRunAfter 'integrationTest'
+}
+
+check.dependsOn apiTest
+check.dependsOn integrationTest
+
+task showProperties {
+	println property2
+	println rootProject.name
+}
+
+apply from: "${projectDir}/gradle/idea.gradle"
+apply from: "${projectDir}/gradle/version-info.gradle"

@@ -14,7 +14,7 @@ import javax.persistence.Version;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @MappedSuperclass
-public class ConcurrencyEntity extends DomainEntity {
+public class ConcurrencySafeEntity extends DomainEntity {
     @Version
     protected int concurrencyVersion;
 }
