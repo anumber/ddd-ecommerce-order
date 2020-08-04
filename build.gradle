@@ -7,9 +7,8 @@ plugins {
 
 /*java 插件的额外属性*/
 //编译源文件的java版本
-sourceCompatibility = '1.8'
-//打包成jar文件时的文件名称
-archivesBaseName = 'ecommerce-order'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 /*自定义的额外属性*/
 ext {
@@ -73,7 +72,7 @@ sourceSets {
 
 }
 
-test {
+tasks.withType(Test) {
 	useJUnitPlatform()
 }
 
